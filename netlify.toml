@@ -1,0 +1,16 @@
+# netlify.toml
+[build]
+  command = "npm run build"   # Or "yarn build" if you use yarn
+  publish = "dist"            # Change to "build" if you used Create React App
+
+# (Optional) redirect all routes to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# (Optional) set correct MIME type for JS files (extra safety)
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
