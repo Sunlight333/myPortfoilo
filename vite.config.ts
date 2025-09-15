@@ -17,34 +17,33 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunks
-          'react-vendor': ['react', 'react-dom'],
-          'framer-motion': ['framer-motion'],
-          'lucide-react': ['lucide-react'],
-          'ui-components': [
-            '@/components/ui/button',
-            '@/components/ui/card',
-            '@/components/ui/badge',
-            '@/components/ui/tabs',
-            '@/components/ui/dialog'
-          ],
-          // Page chunks
-          'projects': ['./src/pages/Projects.tsx'],
-          'about': ['./src/pages/About.tsx'],
-          'contact': ['./src/pages/Contact.tsx'],
-          'resume': ['./src/pages/Resume.tsx'],
-          // Component chunks
-          'project-components': [
-            './src/components/ProjectCard.tsx',
-            './src/components/ProjectDetailModal.tsx',
-            './src/components/LazyImage.tsx'
-          ]
+        manualChunks: (id) => {
+          // Only chunk vendor libraries to avoid Rollup issues
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('framer-motion')) {
+              return 'framer-motion';
+            }
+            if (id.includes('lucide-react')) {
+              return 'lucide-react';
+            }
+            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'ui-vendor';
+            }
+            return 'vendor';
+          }
         }
       }
     },
     chunkSizeWarningLimit: 1000
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'framer-motion', 'lucide-react']
   }
 }));
