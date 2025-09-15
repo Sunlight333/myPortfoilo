@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ['react', 'react-dom']
   },
   build: {
     target: 'esnext',
@@ -22,20 +23,21 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Only chunk vendor libraries to avoid Rollup issues
+          // Conservative chunking to avoid React context issues
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
+            // Keep all React-related packages together
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler') || id.includes('@types/react')) {
               return 'react-vendor';
             }
+            // Keep UI libraries together
+            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('lucide-react')) {
+              return 'ui-vendor';
+            }
+            // Keep animation libraries together
             if (id.includes('framer-motion')) {
               return 'framer-motion';
             }
-            if (id.includes('lucide-react')) {
-              return 'lucide-react';
-            }
-            if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'ui-vendor';
-            }
+            // Keep other vendor libraries together
             return 'vendor';
           }
         }
@@ -44,6 +46,10 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'framer-motion', 'lucide-react']
+    include: ['react', 'react-dom', 'framer-motion', 'lucide-react'],
+    force: true
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
   }
 }));
