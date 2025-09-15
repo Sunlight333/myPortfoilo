@@ -2,10 +2,19 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { firebaseConfig } from './env';
+
+// Firebase configuration - using fallback values
+const firebaseConfig = {
+  apiKey: "your-api-key-here",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};
 
 console.log("=== FIREBASE CONFIG LOADING ===");
-console.log("Successfully loaded Firebase config from env.ts");
+console.log("Using fallback Firebase configuration");
 console.log("Project ID:", firebaseConfig.projectId);
 console.log("Auth Domain:", firebaseConfig.authDomain);
 
